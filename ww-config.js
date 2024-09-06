@@ -254,6 +254,7 @@ export default {
       bindable: true,
       responsive: true,
       defaultValue: false,
+      hidden: content => !content.dataLabelsEnabled,
     },
 
     dataLabelsAlign: {
