@@ -89,7 +89,7 @@ export default {
       /* wwEditor:start */
       bindingValidation: {
           type: 'array',
-          tooltip: 'A collection of data in array format: `[{}, {}, ...]`',
+          tooltip: 'A collection of data in array format: `[{"Meta"}, {"Tiktok"}, ...]`',
       },
       /* wwEditor:end */
   },
@@ -114,15 +114,15 @@ export default {
       type: 'TextSelect',
       options: {
         options: [
-            { value: '{series.name}: <b>{point.y:.2f}</b>', label: 'Classic' },
-            { value: '{series.name}: <b>{point.y:.2f}%</b>', label: '%' },
-            { value: '{series.name}: <b>{point.y:.2f}€</b>', label: '€' },
+            { value: '{series.name}: <b>{point.y:,.2f}</b>', label: 'Classic' },
+            { value: '{series.name}: <b>{point.y:,.2f}%</b>', label: '%' },
+            { value: '{series.name}: <b>{point.y:,.2f}€</b>', label: '€' },
         ],
       },      
       section: 'settings',
       bindable: true,
       responsive: true,
-      defaultValue: '{series.name}: <b>{point.y:.2f}</b>',
+      defaultValue: '{series.name}: <b>{point.y:,.2f}</b>',
     },
 
     legendEnabled: {
@@ -235,15 +235,15 @@ export default {
       type: 'TextSelect',
       options: {
         options: [
-            { value: '{point.y:.2f}', label: 'Classic' },
-            { value: '{point.y:.2f}%', label: '%' },
-            { value: '{point.y:.2f}€', label: '€' },
+            { value: '{point.y:,.2f}', label: 'Classic' },
+            { value: '{point.y:,.2f}%', label: '%' },
+            { value: '{point.y:,.2f}€', label: '€' },
         ],
       },      
       section: 'settings',
       bindable: true,
       responsive: true,
-      defaultValue: '{point.y:.2f}',
+      defaultValue: '{point.y:,.2f}',
       hidden: content => !content.dataLabelsEnabled,
     },
 
