@@ -17,7 +17,7 @@ export default {
 
   data() {
     return {
-      chartInstance: null, // Store chart instance here
+      chartInstance: null, // Store chart instance here 
     };
   },
 
