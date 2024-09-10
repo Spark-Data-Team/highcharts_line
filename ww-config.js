@@ -73,7 +73,7 @@ export default {
     },
 
     xDataLabelsEnabled:{
-      label: 'X axis label',
+      label: 'X label',
       type: 'OnOff',
       responsive: true,
       states: true,
