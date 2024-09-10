@@ -9,7 +9,6 @@ import { colorPalettes } from './colorPalettes'; // Importer les palettes de cou
 
 exportingOption(Highcharts);
 
-
 export default {
   props: {
     content: { type: Object, required: true },
@@ -17,96 +16,129 @@ export default {
 
   data() {
     return {
-      chartInstance: null, // Store chart instance here 
+      chartInstance: null, // Stocker l'instance du graphique ici
     };
   },
 
   computed: {
-
+    // Retourne la palette de couleurs sélectionnée ou une valeur par défaut
     selectedPalette() {
-      return colorPalettes[this.content.colorPalette] || colorPalettes.metabase; // Définit la palette par défaut si aucune sélection
+      return colorPalettes[this.content.colorPalette] || colorPalettes.metabase;
+    },
+
+    // Modifie dynamiquement les séries en fonction de `areaSplineSelection`
+    modifiedSeries() {
+      const areaSplineSelection = this.content.areaSplineSelection ?? [1]; // Valeur par défaut [] si areaSplineSelection est null ou undefined
+      const series = this.content.series ?? [{ name: 'Jane', data: [76, 0, 4, 12, 109, 14] }, { name: 'John', data: [35, 7, 3, 43, 180, 45] }, { name: 'Doe', data: [50, 30, 40, 70, 90, 100] }];
+
+      return series.map((item, index) => {
+        // Si l'indice est dans areaSplineSelection, on ajoute 'type: areaspline'
+        if (areaSplineSelection.includes(index) && this.content.areaSplineEnabled) {
+          return {
+            ...item,
+            type: 'areaspline', // Ajoute le type 'areaspline' à la série correspondante
+          };
+        }
+        return item; // Renvoie la série telle quelle sinon
+      });
     },
 
     chartOptions() {
-      
       return {
+        colors: this.selectedPalette,
 
-        colors: this.selectedPalette, // Utiliser la palette sélectionnée
-          
         chart: {
-          type: this.content.barOrientation,
-          backgroundColor:'transparent',
+          type: 'spline',
+          backgroundColor: 'transparent',
 
           zooming: {
             type: this.content.zoomEnabled ? this.content.zoomType : null,
             pinchType: this.content.zoomEnabled ? this.content.zoomType : null,
           },
-
         },
 
-        exporting:{
+        exporting: {
           enabled: this.content.exportingEnabled,
           buttons: {
-                contextButton: {
-                    menuItems: ['viewFullscreen','separator','downloadPNG', 'downloadPDF','downloadSVG', ]
-                },
-              }
+            contextButton: {
+              menuItems: ['viewFullscreen', 'separator', 'downloadPNG', 'downloadPDF', 'downloadSVG'],
+            },
+          },
         },
 
         title: {
-          text: null
+          text: null,
         },
 
         xAxis: {
-          categories: this.content.categories,
+          categories: this.content.categories || ['Dec', 'Jan', 'Fev', 'March', 'April', 'May'],
+          labels: {
+            enabled: this.content.xDataLabelsEnabled // Cache ou nom les étiquettes de l'axe des x
+          },
+          lineColor:'#919191D9', 
+          min: 1, 
         },
 
         yAxis: {
-          title:null,
+          title: null,
+          
         },
 
         tooltip: {
-          pointFormat: this.content.tooltipFormat, 
+          pointFormat: this.content.tooltipFormat,
+          shared: this.content.tooltipShared,
         },
 
         legend: {
-          enabled:this.content.legendEnabled,
+          enabled: this.content.legendEnabled,
           layout: this.content.legendLayout,
           align: this.content.legendAlign,
           verticalAlign: this.content.legendVerticalAlign,
           floating: false,
           y: this.content.legendY,
-          itemDistance: this.content.legendDistance, 
-          itemStyle: {"color": "#1C1C1C", "cursor": "pointer", "fontSize": "0.8em", "fontWeight": "500", "textOverflow": "ellipsis"}, 
-        
+          itemDistance: this.content.legendDistance,
+          itemStyle: {
+            color: '#1C1C1C',
+            cursor: 'pointer',
+            fontSize: `${this.content.legendFontSize}px`,
+            fontWeight: '500',
+            textOverflow: 'ellipsis',
+          },
         },
 
         plotOptions: {
-            series: {
-              groupPadding: this.content.barWidth, // Variable dynamique pour groupPadding
-              animation: {
-                duration: this.content.animationDuration, // Variable pour la durée de l'animation
+          series: {
+            animation: {
+              duration: this.content.animationDuration,
+            },
+
+            lineWidth: this.content.lineWidth,
+
+            marker: {
+              enabled: this.content.markerEnabled,
+              symbol: 'circle',
+            },
+
+            borderRadius: this.content.borderRadius,
+
+            dataLabels: {
+              enabled: this.content.dataLabelsEnabled,
+              format: this.content.dataLabelsFormat,
+              style: {
+                fontWeight: '500',
+                fontSize: `${this.content.dataLabelsFontSize}px`,
               },
+            },
 
-              borderRadius:this.content.borderRadius,
+            centerInCategory: true,
+          },
 
-              dataLabels: {
-                enabled: this.content.dataLabelsEnabled, // Variable pour activer/désactiver les étiquettes
-                format: this.content.dataLabelsFormat, // Variable pour le format des étiquettes
-                align: this.content.dataLabelsInside ? this.content.dataLabelsAlign : null, 
-                inside: this.content.dataLabelsInside, 
-                style: {
-                    fontWeight: '500',
-                    fontSize:'0.8em'
-                }
-              }, 
-
-              centerInCategory: true
-            }
+          areaspline: {
+            fillOpacity: this.content.areaSplineOpacity,
+          },
         },
 
-      series: this.content.series
-        
+        series: this.modifiedSeries, // Utilise les séries modifiées
       };
     },
   },
@@ -116,7 +148,7 @@ export default {
       handler() {
         this.createChart();
       },
-      deep: true, // Ensure it watches nested objects
+      deep: true, // Surveiller les objets imbriqués pour les changements
     },
   },
 
@@ -125,9 +157,10 @@ export default {
   },
 
   methods: {
+    // Créer le graphique avec les options mises à jour
     createChart() {
       if (this.chartInstance) {
-        this.chartInstance.destroy(); // Destroy the existing chart before re-creating it
+        this.chartInstance.destroy(); // Détruire le graphique existant avant de le recréer
       }
       this.chartInstance = Highcharts.chart(this.$refs.chartContainer, this.chartOptions);
     },
@@ -136,10 +169,7 @@ export default {
 </script>
 
 <style scoped>
-
 * {
-    font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
-
-
 </style>

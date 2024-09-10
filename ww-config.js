@@ -1,107 +1,94 @@
 export default {
-
   editor: {
     label: {
-      en: "Highcharts - Bar",
+      en: "Highcharts - Line",
     },
-
     icon: 'https://cdn.weweb.io/designs/c55504b2-3c64-44db-8bc0-db0aab821079/sections/highcharts.svg?_wwcv=1725614333416',
 
-    customStylePropertiesOrder:[
-      'barOrientation',
-
+    customStylePropertiesOrder: [
       [
         'colorPalette',
-        'borderRadius',
-        'barWidth',
         'animationDuration',
-        'animationEasing',
-        
-      ], 
-
+        'markerEnabled',
+        'lineWidth', 
+        'xDataLabelsEnabled'
+      ],
+      [
+        'areaSplineEnabled',
+        'areaSplineSelection',
+        'areaSplineOpacity'
+      ],
       [
         'legendEnabled',
+        'legendFontSize',
         'legendLayout',
         'legendAlign',
         'legendVerticalAlign',
-        'legendY', 
-        'legendDistance'
-      ], 
-
-      [ 
-        'zoomEnabled', 
-        'zoomType'
-      ]
-    ], 
-
-    customSettingsPropertiesOrder:[
-      [
-        'categories',
-        'series', 
-        ''
-      ], 
-
+        'legendY',
+        'legendDistance',
+      ],
       [
         'tooltipFormat',
+        'tooltipShared'
       ],
-
       [
-        'dataLabelsEnabled', 
+        'dataLabelsEnabled',
+        'dataLabelsFontSize',
         'dataLabelsFormat',
-        'dataLabelsInside', 
-        'dataLabelsAlign'
+      ],
+    ],
+
+    customSettingsPropertiesOrder: [
+      [
+        'categories',
+        'series',
+      ],
+      [
+        'zoomEnabled',
+        'zoomType'
       ],
       [
         'exportingEnabled'
       ]
-
     ]
   },
 
-  
-
   properties: {
-
-    barOrientation: {
-      label: 'Axis',
-      type: 'BigIconRadioGroup',
-      options: {
-          choices: [
-              { icon: 'align-bottom', value: 'column', label: 'X' },
-              { icon: 'align-left', value: 'bar', label: 'Y' },
-          ],
-      },
-      bindable: true,
-      responsive: true,
-      states: true,
-      defaultValue: 'column',
-  },
-
+    // CATEGORIES SETTINGS
     categories: {
       label: 'Categories',
       type: 'Info',
-      options: { text: 'Bind categories data' },
       section: 'settings',
-      bindable: "list",
       responsive: true,
       states: true,
+      bindable: "list",
+      options: { text: 'Bind categories data' },
       defaultValue: null,
       /* wwEditor:start */
       bindingValidation: {
-          type: 'array',
-          tooltip: 'A collection of data in array format: `[{"Meta"}, {"Tiktok"}, ...]`',
+        type: 'array',
+        tooltip: 'A collection of data in array format: `[{"Meta"}, {"Tiktok"}, ...]`',
       },
       /* wwEditor:end */
-  },
+    },
+
+    xDataLabelsEnabled:{
+      label: 'X axis label',
+      type: 'OnOff',
+      responsive: true,
+      states: true,
+      bindable: true,
+      defaultValue: true,
+    },
 
     series: {
       label: 'Series',
       type: 'Info',
-      options: { text: 'Bind series data' },
       section: 'settings',
-      bindable: "list",
       responsive: true,
       states: true,
+      bindable: "list",
+      options: { text: 'Bind series data' },
       defaultValue: null,
       bindingValidation: {
         type: 'array',
@@ -109,85 +96,197 @@ export default {
       },
     },
 
-    tooltipFormat: {
-      label: 'Tooltip format',
-      type: 'TextSelect',
-      options: {
-        options: [
-            { value: '{series.name}: <b>{point.y:,.2f}</b>', label: 'Classic' },
-            { value: '{series.name}: <b>{point.y:,.2f}%</b>', label: '%' },
-            { value: '{series.name}: <b>{point.y:,.2f}€</b>', label: '€' },
-        ],
-      },      
+    // ZOOM SETTINGS
+    zoomEnabled: {
+      label: 'Zoom',
+      type: 'OnOff',
       section: 'settings',
-      bindable: true,
       responsive: true,
-      defaultValue: '{series.name}: <b>{point.y:,.2f}</b>',
+      states: true,
+      bindable: true,
+      defaultValue: true,
     },
 
+    zoomType: {
+      label: 'Type',
+      type: 'TextSelect',
+      section: 'settings',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: {
+        options: [
+          { value: 'x', label: 'X' },
+          { value: 'y', label: 'Y' },
+          { value: 'xy', label: 'Both' },
+        ],
+      },
+      defaultValue: 'x',
+      hidden: content => !content.zoomEnabled,
+    },
+
+    // EXPORT SETTINGS
+    exportingEnabled: {
+      label: 'Exporting',
+      type: 'OnOff',
+      section: 'settings',
+      responsive: true,
+      states: true,
+      bindable: true,
+      defaultValue: false,
+    },
+
+    // STYLE SETTINGS
+    colorPalette: {
+      label: 'Color palette',
+      type: 'TextSelect',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: {
+        options: [
+          { value: 'metabase', label: 'Metabase ' },
+          { value: 'metabasePastel', label: 'Metabase - pastel' },
+          { value: 'blue', label: 'Blue' },
+          { value: 'pastel', label: 'Pastel' },
+          { value: 'springPastel', label: 'Spring Pastels' },
+        ],
+      },
+      defaultValue: 'metabase',
+    },
+
+    animationDuration: {
+      label: 'Animation Duration (ms)',
+      type: 'Number',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: { min: 100, max: 5000, step: 100 },
+      defaultValue: 1500,
+    },
+
+    markerEnabled: {
+      label: 'Marker',
+      type: 'OnOff',
+      responsive: true,
+      states: true,
+      bindable: true,
+      defaultValue: false,
+    },
+
+    lineWidth: {
+      label: 'Line width',
+      type: 'Number',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: { min: 0, max: 100, step: 0.5 },
+      defaultValue: 2.5,
+    },
+
+    // AREA SPLINE SETTINGS
+    areaSplineEnabled: {
+      label: 'Area spline',
+      type: 'OnOff',
+      responsive: true,
+      states: true,
+      bindable: true,
+      defaultValue: false,
+    },
+
+    areaSplineSelection: {
+      label: 'Line',
+      type: 'Info',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: { text: 'Select the line(s)' },
+      defaultValue: null,
+      hidden: content => !content.areaSplineEnabled,
+      bindingValidation: {
+        type: 'array',
+        tooltip: 'Should be an array of line index (start at 0): `[0,1]`',
+      },
+    },
+
+    areaSplineOpacity: {
+      label: 'Opacity',
+      type: 'Number',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: { min: 0, max: 1, step: 0.1 },
+      defaultValue: 0.2,
+      hidden: content => !content.areaSplineEnabled,
+    },
+
+    // LEGEND SETTINGS
     legendEnabled: {
       label: 'Enable Legend',
       type: 'OnOff',
-      bindable: true,
       responsive: true,
+      states: true,
+      bindable: true,
       defaultValue: true,
     },
 
     legendLayout: {
       label: 'Layout',
       type: 'TextSelect',
+      responsive: true,
+      states: true,
+      bindable: true,
       options: {
         options: [
           { value: 'horizontal', label: 'Horizontal' },
-          { value: 'vertical', label: 'Vertical' }
+          { value: 'vertical', label: 'Vertical' },
         ],
       },
-      bindable: true,
-      responsive: true,
       defaultValue: 'horizontal',
       hidden: content => !content.legendEnabled,
-
     },
-    
+
     legendAlign: {
       label: 'Align',
       type: 'TextSelect',
+      responsive: true,
+      states: true,
+      bindable: true,
       options: {
         options: [
           { value: 'center', label: 'Center' },
           { value: 'left', label: 'Left' },
-          { value: 'right', label: 'Right' }
+          { value: 'right', label: 'Right' },
         ],
       },
-      section: 'layout_settings',
-      bindable: true,
-      responsive: true,
       defaultValue: 'center',
       hidden: content => !content.legendEnabled,
     },
-    
+
     legendVerticalAlign: {
       label: 'Position',
       type: 'TextSelect',
+      responsive: true,
+      states: true,
+      bindable: true,
       options: {
         options: [
           { value: 'top', label: 'Top' },
           { value: 'middle', label: 'Middle' },
-          { value: 'bottom', label: 'Bottom' }
+          { value: 'bottom', label: 'Bottom' },
         ],
       },
-      bindable: true,
-      responsive: true,
       defaultValue: 'bottom',
       hidden: content => !content.legendEnabled,
     },
-    
+
     legendY: {
       label: 'Y Offset',
       type: 'Number',
-      options: { min: -100, max: 100, step: 1 },
-      bindable: true,
       responsive: true,
+      states: true,
+      bindable: true,
+      options: { min: -100, max: 100, step: 1 },
       defaultValue: 10,
       hidden: content => !content.legendEnabled,
     },
@@ -195,164 +294,87 @@ export default {
     legendDistance: {
       label: 'Distance between',
       type: 'Number',
-      options: { min:0, max: 500, step: 5 },
-      bindable: true,
       responsive: true,
+      states: true,
+      bindable: true,
+      options: { min: 0, max: 500, step: 5 },
       defaultValue: 20,
       hidden: content => !content.legendEnabled,
     },
 
-    barWidth: {
-      label: 'Bar width',
+    legendFontSize: {
+      label: 'Font size',
       type: 'Number',
-      options: { min: -10, max: 5, step: 0.1 },
-      bindable: true,
       responsive: true,
-      defaultValue: 0.1,
-    },
-    
-    animationDuration: {
-      label: 'Animation Duration (ms)',
-      type: 'Number',
-      options: { min: 100, max: 5000, step: 100 },
+      states: true,
       bindable: true,
-      responsive: true,
-      defaultValue: 1500,
+      options: { min: 0, max: 100, step: 1 },
+      defaultValue: 14,
+      hidden: content => !content.legendEnabled,
     },
-    
+
+    // TOOLTIP SETTINGS
+    tooltipFormat: {
+      label: 'Tooltip format',
+      type: 'TextSelect',
+      responsive: true,
+      states: true,
+      bindable: true,
+      options: {
+        options: [
+          { value: '{series.name}: <b>{point.y:,.2f}</b><br/>', label: 'Classic' },
+          { value: '{series.name}: <b>{point.y:,.2f}%</b><br/>', label: '%' },
+          { value: '{series.name}: <b>{point.y:,.2f}€</b><br/>', label: '€' },
+        ],
+      },
+      defaultValue: '{series.name}: <b>{point.y:,.2f}</b><br/>',
+    },
+
+    tooltipShared: {
+      label: 'Shared',
+      type: 'OnOff',
+      responsive: true,
+      states: true,
+      bindable: true,
+      defaultValue: false,
+    },
+
+    // DATA LABELS SETTINGS
     dataLabelsEnabled: {
       label: 'Enable Labels',
       type: 'OnOff',
-      section: 'settings',
-      bindable: true,
       responsive: true,
-      defaultValue: true,
+      states: true,
+      bindable: true,
+      defaultValue: false,
     },
-    
+
     dataLabelsFormat: {
-      type: 'Text',
       label: 'Format',
       type: 'TextSelect',
+      responsive: true,
+      states: true,
+      bindable: true,
       options: {
         options: [
-            { value: '{point.y:,.2f}', label: 'Classic' },
-            { value: '{point.y:,.2f}%', label: '%' },
-            { value: '{point.y:,.2f}€', label: '€' },
+          { value: '{point.y:,.2f}', label: 'Classic' },
+          { value: '{point.y:,.2f}%', label: '%' },
+          { value: '{point.y:,.2f}€', label: '€' },
         ],
-      },      
-      section: 'settings',
-      bindable: true,
-      responsive: true,
+      },
       defaultValue: '{point.y:,.2f}',
       hidden: content => !content.dataLabelsEnabled,
     },
 
-    dataLabelsInside:{
-      label: 'Inside',
-      type: 'OnOff',
-      section: 'settings',
-      bindable: true,
+    dataLabelsFontSize: {
+      label: 'Font size',
+      type: 'Number',
       responsive: true,
-      defaultValue: false,
+      states: true,
+      bindable: true,
+      options: { min: 0, max: 100, step: 1 },
+      defaultValue: 12,
       hidden: content => !content.dataLabelsEnabled,
     },
-
-    dataLabelsAlign: {
-      label: 'Position',
-      type: 'TextSelect',
-      section: 'settings',
-      options: {
-        options: [
-          { value: 'left', label: 'Left' },
-          { value: 'center', label: 'Center' },
-          { value: 'right', label: 'Right' }
-        ],
-      },
-      bindable: true,
-      responsive: true,
-      defaultValue: {},
-      hidden: content => !content.dataLabelsInside,
-    },
-
-
-    exportingEnabled: {
-      label: 'Exporting',
-      type: 'OnOff',
-      section: 'settings',
-      bindable: true,
-      responsive: true,
-      defaultValue: false,
-    },
-
-    zoomEnabled: {
-      label: 'Zoom',
-      type: 'OnOff',
-      bindable: true,
-      responsive: true,
-      defaultValue: true,
-    },
-
-    zoomType: {
-      label: 'Type',
-      type: 'TextSelect',
-      options: {
-        options: [
-            { value: 'x', label: 'X' },
-            { value: 'y', label: 'Y' },
-            { value: 'xy', label: 'Both' },
-        ],
-      },      
-      bindable: true,
-      responsive: true,
-      defaultValue: 'x',
-      hidden: content => !content.zoomEnabled,
-    },
-
-    colorPalette:{
-      label: 'Color palette',
-      type: 'TextSelect',
-      options: {
-        options: [
-            { 
-              value: 'metabase', 
-              label: 'Metabase '
-            },
-
-            { 
-              value: 'metabasePastel', 
-              label: 'Metabase - pastel'
-            },
-
-            { 
-              value: 'blue', 
-              label: 'Blue'
-            },
-
-            { 
-              value: 'pastel', 
-              label: 'Pastel'
-            },
-            { 
-              value: 'springPastel', 
-              label: 'Spring Pastels'
-            },
-        ],
-      },      
-      bindable: true,
-      responsive: true,
-      defaultValue: 'metabase',
-    },
-
-    borderRadius:{
-      label: 'Border radius',
-      type: 'Number',
-      options: { min: 0, max: 50, step: 1 },
-      bindable: true,
-      responsive: true,
-      defaultValue: 4,
-    },
-
   },
-
-  
 };
